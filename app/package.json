@@ -1,8 +1,5 @@
 {
-  "android": {
-    "v8Flags": "--expose_gc"
-  },
-  "main": "app.js",
-  "name": "tns-template-blank",
-  "version": "4.1.2"
+  "main": "main.js",
+  "name": "nativescript-template-ng-tutorial",
+  "version": "6.0.0"
 }

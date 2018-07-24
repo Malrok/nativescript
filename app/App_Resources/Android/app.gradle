@@ -8,8 +8,8 @@
 android {  
   defaultConfig {  
     generatedDensities = []
-    applicationId = "org.nativescript.nativescript" 
-    
+    applicationId = "com.moventes.moventest.nativescript" 
+    multiDexEnabled true
     //override supported platforms
     // ndk {
     //       abiFilters.clear()
@@ -21,3 +21,7 @@ android {
     additionalParameters "--no-version-vectors"  
   }  
 } 
+
+dependencies {
+  implementation 'com.android.support:multidex:1.0.3'
+}

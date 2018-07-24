@@ -1,0 +1,9 @@
+<GridLayout>
+    <ListView [items]="users | async" (itemTap)="onUserSelect($event)">
+        <ng-template let-user="item">
+            <StackLayout>
+                <Label [text]="user.first_name"></Label>
+            </StackLayout>
+        </ng-template>
+    </ListView>
+</GridLayout>
