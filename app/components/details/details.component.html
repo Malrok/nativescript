@@ -1,4 +1,10 @@
-<StackLayout>
-  <Label class="h1 title"
-    text="components/details Is working"></Label>
+<StackLayout [formGroup]="formGroup">
+  <Label text="first name"></Label>
+  <TextField type="text" formControlName="first_name"></TextField>
+  <Label text="last name"></Label>
+  <TextField type="text" formControlName="last_name"></TextField>
+  <Label text="description"></Label>
+  <TextField type="text" formControlName="description"></TextField>
+  <Label text="email"></Label>
+  <TextField type="email" formControlName="email"></TextField>
 </StackLayout>

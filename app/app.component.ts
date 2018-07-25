@@ -5,7 +5,9 @@ import * as firebase from "nativescript-plugin-firebase";
   selector: "my-app",
   template: `
     <ActionBar title="My App" class="action-bar"></ActionBar>
-    <router-outlet></router-outlet>
+    <StackLayout>
+      <router-outlet></router-outlet>
+    </StackLayout>
   `
 })
 export class AppComponent implements OnInit {

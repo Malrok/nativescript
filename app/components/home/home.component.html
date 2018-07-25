@@ -1,8 +1,9 @@
 <GridLayout>
-    <ListView [items]="users | async" (itemTap)="onUserSelect($event)">
+    <ListView [items]="users | async">
         <ng-template let-user="item">
-            <StackLayout>
-                <Label [text]="user.first_name"></Label>
+            <StackLayout orientation="horizontal" (tap)="onUserSelect(user)">
+                <Image src="{{ user.picture }}" width="72" height="72" margin="3" stretch="aspectFill"></Image>
+                <Label verticalAlignment="center" text="{{ user.first_name }} {{ user.last_name }}"></Label>
             </StackLayout>
         </ng-template>
     </ListView>

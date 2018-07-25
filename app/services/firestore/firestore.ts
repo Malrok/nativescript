@@ -26,8 +26,17 @@ export class FirestoreProvider {
     });
   }
 
-  getUserById(id: string): firebase.firestore.DocumentReference {
-    return firebase.firestore.doc(`users/${id}`)
+  // getUserById(id: string): Observable<User> {
+  //   return Observable.create(subscriber => {
+  //     firebase.firestore.doc(`users/${id}`).onSnapshot((snapshot: firebase.firestore.DocumentSnapshot) => {
+  //       this.ngZone.run(() => {
+  //         subscriber.next(snapshot);
+  //       });
+  //     });
+  //   });
+  // }
+  getUserById(id: string): Promise<firebase.firestore.DocumentSnapshot> {
+    return firebase.firestore.collection('users').doc(id).get();
   }
 
   // saveUser(formGroup: FormGroup): Promise<void> {
