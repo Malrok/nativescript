@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as imagepicker from "nativescript-imagepicker";
 import * as firebase from "nativescript-plugin-firebase";
 import { UserFactory } from '~/models/factories/user.factory';
 import { User } from '~/models/user';
 import { FirestoreProvider } from '~/services/firestore/firestore';
+import { ImageAsset } from '../../../node_modules/tns-core-modules/image-asset/image-asset';
 
 @Component({
   selector: 'app-components/details',
@@ -15,14 +17,13 @@ export class DetailsComponent {
 
   public formGroup: FormGroup;
 
-  // private id: string;
+  private imagePicker: imagepicker.ImagePicker;
 
   constructor(
     private route: ActivatedRoute,
     private firestore: FirestoreProvider,
     private fb: FormBuilder
   ) {
-    console.log('yes');
     this.formGroup = this.fb.group({
       id: [''],
       first_name: ['', Validators.required],
@@ -32,35 +33,24 @@ export class DetailsComponent {
       picture: [''],
       address: ['']
     });
+    this.imagePicker = imagepicker.create({
+      mode: "single"
+    });
   }
 
   ngOnInit() {
     this.route.params
       .forEach((params) => {
         const id = params['id'];
-        // const id = this.navParams.get('id');
         if (id === 'new') {
           this.setFormGroupValues(UserFactory.newInstance());
         } else {
-          console.log('yurp');
           this.firestore.getUserById(id).then((snapshot: firebase.firestore.DocumentSnapshot) => {
             this.setFormGroupValues(UserFactory.fromDocument(snapshot));
           });
         }
       });
   }
-
-  // private createFormGroup() {
-  //   this.formGroup = this.fb.group({
-  //     id: [''],
-  //     first_name: ['', Validators.required],
-  //     last_name: ['', Validators.required],
-  //     description: [''],
-  //     email: ['', [Validators.required, Validators.email]],
-  //     picture: [''],
-  //     address: ['']
-  //   });
-  // }
 
   private setFormGroupValues(user: User) {
     this.formGroup.patchValue({
@@ -72,6 +62,16 @@ export class DetailsComponent {
       picture: user.picture,
       address: user.address
     });
+  }
+
+  public pickImage() {
+    this.imagePicker
+      .authorize()
+      .then(() => this.imagePicker.present())
+      .then((selection: ImageAsset[]) => this.formGroup.controls.picture.patchValue(selection[0]))
+      .catch(function (e) {
+        console.error(e);
+      });
   }
 
 }

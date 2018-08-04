@@ -1,4 +1,5 @@
 <StackLayout [formGroup]="formGroup">
+  <Image [src]="formGroup.controls.picture.value" width="72" height="72" (tap)="pickImage()"></Image>
   <Label text="first name"></Label>
   <TextField type="text" formControlName="first_name"></TextField>
   <Label text="last name"></Label>
