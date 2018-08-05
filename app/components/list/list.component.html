@@ -1,0 +1,10 @@
+<StackLayout>
+  <ListView [items]="users | async">
+    <ng-template let-user="item">
+      <StackLayout orientation="horizontal" (tap)="onUserSelect(user)">
+        <Image [src]="user.picture" width="72" height="72"></Image>
+        <Label verticalAlignment="center" text="{{ user.first_name }} {{ user.last_name }}"></Label>
+      </StackLayout>
+    </ng-template>
+  </ListView>
+</StackLayout>

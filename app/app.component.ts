@@ -1,17 +1,21 @@
 import { Component, OnInit } from "@angular/core";
 import * as firebase from "nativescript-plugin-firebase";
+import { Page } from "ui/page";
+
 
 @Component({
   selector: "my-app",
   template: `
-    <ActionBar title="My App" class="action-bar"></ActionBar>
     <StackLayout>
       <router-outlet></router-outlet>
     </StackLayout>
   `
 })
 export class AppComponent implements OnInit {
-  // Your TypeScript logic goes here
+
+  constructor(page: Page) {
+    page.actionBarHidden = true;
+  }
 
   ngOnInit() {
     firebase.init({

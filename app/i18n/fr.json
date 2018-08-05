@@ -1,0 +1,11 @@
+{
+    "app.name": "Moventest Nativescript",
+    "PAGES": {
+        "DETAILS": {
+            "FIRST_NAME": "Prénom",
+            "LAST_NAME": "Nom",
+            "DESCRIPTION": "Description",
+            "EMAIL": "Email"
+        }
+    }
+}

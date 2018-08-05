@@ -1,11 +1,11 @@
 <StackLayout [formGroup]="formGroup">
   <Image [src]="formGroup.controls.picture.value" width="72" height="72" (tap)="pickImage()"></Image>
-  <Label text="first name"></Label>
+  <Label text="{{ 'PAGES.DETAILS.FIRST_NAME' | L }}"></Label>
   <TextField type="text" formControlName="first_name"></TextField>
-  <Label text="last name"></Label>
+  <Label text="{{ 'PAGES.DETAILS.LAST_NAME' | L }}"></Label>
   <TextField type="text" formControlName="last_name"></TextField>
-  <Label text="description"></Label>
+  <Label text="{{ 'PAGES.DETAILS.DESCRIPTION' | L }}"></Label>
   <TextField type="text" formControlName="description"></TextField>
-  <Label text="email"></Label>
+  <Label text="{{ 'PAGES.DETAILS.EMAIL' | L }}"></Label>
   <TextField type="email" formControlName="email"></TextField>
 </StackLayout>
