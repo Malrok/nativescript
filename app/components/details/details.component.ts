@@ -3,10 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import * as imagepicker from "nativescript-imagepicker";
 import * as firebase from "nativescript-plugin-firebase";
+import { ImageAsset } from 'tns-core-modules/image-asset/image-asset';
 import { UserFactory } from '~/models/factories/user.factory';
 import { User } from '~/models/user';
 import { FirestoreProvider } from '~/services/firestore/firestore';
-import { ImageAsset } from '../../../node_modules/tns-core-modules/image-asset/image-asset';
 
 @Component({
   selector: 'app-components/details',
@@ -68,7 +68,8 @@ export class DetailsComponent {
     this.imagePicker
       .authorize()
       .then(() => this.imagePicker.present())
-      .then((selection: ImageAsset[]) => this.formGroup.controls.picture.patchValue(selection[0]))
+      .then((selection: ImageAsset[]) => this.firestore.uploadFile(selection[0]))
+      .then((url: string) => this.formGroup.controls.picture.patchValue(url))
       .catch(function (e) {
         console.error(e);
       });

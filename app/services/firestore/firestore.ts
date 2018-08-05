@@ -1,6 +1,8 @@
 import { Injectable, NgZone } from '@angular/core';
 import * as firebase from "nativescript-plugin-firebase";
+import { UploadFileResult } from 'nativescript-plugin-firebase/storage/storage';
 import { Observable } from 'rxjs';
+import { ImageAsset } from 'tns-core-modules/image-asset/image-asset';
 import { UserFactory } from '~/models/factories/user.factory';
 import { User } from '~/models/user';
 
@@ -47,5 +49,37 @@ export class FirestoreProvider {
   //   };
   //   return firebase.firestore.doc<User>(`users/${id}`).set(UserFactory.toDocument(formGroup));
   // }
+
+  public uploadFile(imageAsset: ImageAsset): Promise<string> {
+    return new Promise((resolve, reject) => {
+      let filename: string;
+      const filepath = imageAsset.android;
+      // if (isAndroid) {
+      filename = filepath.split('/').pop();
+      // } else {
+      // if (imageAsset.ios && imageAsset.ios.mediaType === PHAssetMediaType.Image) {
+      //     const opt = PHImageRequestOptions.new();
+      //     opt.version = PHImageRequestOptionsVersion.Current;
+      //     PHImageManager.defaultManager().requestImageDataForAssetOptionsResultHandler(
+      //         ios, opt, (imageData: NSData, dataUTI: string, orientation: UIImageOrientation, info: NSDictionary<any, any>) => {
+      //             console.log(info.objectForKey("PHImageFileURLKey").toString());
+      //         });
+      // }
+      // }
+      firebase.storage.uploadFile({
+        remoteFullPath: `avatars/${filename}`,
+        localFullPath: filepath,
+        onProgress: function (status) {
+          console.log("Uploaded fraction: " + status.fractionCompleted);
+          console.log("Percentage complete: " + status.percentageCompleted);
+        }
+      }).then(
+        (uploadedFile: UploadFileResult) => {
+          firebase.storage.getDownloadUrl({
+            remoteFullPath: `avatars/${filename}`
+          }).then((url) => resolve(url), err => reject(err))
+        }, err => reject(err));
+    });
+  }
 
 }
