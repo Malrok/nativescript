@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable as RxObservable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { User } from '~/models/user';
 import { FirestoreProvider } from '~/services/firestore/firestore';
 
@@ -11,16 +10,12 @@ import { FirestoreProvider } from '~/services/firestore/firestore';
 })
 export class ListComponent {
 
-  public users: RxObservable<Array<User>>;
+  public users: Observable<Array<User>>;
 
   constructor(
-    private firestore: FirestoreProvider,
-    private router: Router
+    private firestore: FirestoreProvider
   ) {
     this.users = this.firestore.getAllUsers();
   }
 
-  onUserSelect(item: User) {
-    this.router.navigate(["/details", item.id]);
-  }
 }
