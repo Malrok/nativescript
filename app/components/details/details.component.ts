@@ -75,4 +75,10 @@ export class DetailsComponent {
       });
   }
 
+  public submit() {
+    this.firestore.saveUser(this.formGroup)
+      .then(() => console.log('user saved successfully'))
+      .catch(err => console.error(err));
+  }
+
 }

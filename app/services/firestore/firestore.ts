@@ -1,4 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import * as firebase from "nativescript-plugin-firebase";
 import { UploadFileResult } from 'nativescript-plugin-firebase/storage/storage';
 import { Observable } from 'rxjs';
@@ -28,27 +29,19 @@ export class FirestoreProvider {
     });
   }
 
-  // getUserById(id: string): Observable<User> {
-  //   return Observable.create(subscriber => {
-  //     firebase.firestore.doc(`users/${id}`).onSnapshot((snapshot: firebase.firestore.DocumentSnapshot) => {
-  //       this.ngZone.run(() => {
-  //         subscriber.next(snapshot);
-  //       });
-  //     });
-  //   });
-  // }
   getUserById(id: string): Promise<firebase.firestore.DocumentSnapshot> {
     return firebase.firestore.collection('users').doc(id).get();
   }
 
-  // saveUser(formGroup: FormGroup): Promise<void> {
-  //   let id = formGroup.controls.id.value;
-  //   if (!id) {
-  //     id = firebase.firestore.createId();
-  //     formGroup.controls.id.patchValue(id);
-  //   };
-  //   return firebase.firestore.doc<User>(`users/${id}`).set(UserFactory.toDocument(formGroup));
-  // }
+  saveUser(formGroup: FormGroup): Promise<void | firebase.firestore.DocumentReference> {
+    let id = formGroup.controls.id.value;
+    console.log('saving with id', id);
+    if (id) {
+      return firebase.firestore.collection('users').doc(id).set(UserFactory.toDocument(formGroup));
+    } else {
+      return firebase.firestore.collection('users').add(UserFactory.toDocument(formGroup));
+    }
+  }
 
   public uploadFile(imageAsset: ImageAsset): Promise<string> {
     return new Promise((resolve, reject) => {
