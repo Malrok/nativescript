@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { RouterExtensions } from 'nativescript-angular/router';
 import * as imagepicker from "nativescript-imagepicker";
 import * as firebase from "nativescript-plugin-firebase";
 import { ImageAsset } from 'tns-core-modules/image-asset/image-asset';
@@ -21,6 +22,7 @@ export class DetailsComponent {
 
   constructor(
     private route: ActivatedRoute,
+    private routerExtensions: RouterExtensions,
     private firestore: FirestoreProvider,
     private fb: FormBuilder
   ) {
@@ -77,7 +79,7 @@ export class DetailsComponent {
 
   public submit() {
     this.firestore.saveUser(this.formGroup)
-      .then(() => console.log('user saved successfully'))
+      .then(() => this.routerExtensions.back())
       .catch(err => console.error(err));
   }
 
