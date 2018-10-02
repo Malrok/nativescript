@@ -1,7 +1,9 @@
 
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NativeScriptFormsModule } from 'nativescript-angular/forms';
+import { ModalDialogService } from 'nativescript-angular/modal-dialog';
 import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 import { NativeScriptRouterModule } from 'nativescript-angular/router';
 import { NativeScriptLocalizeModule } from "nativescript-localize/angular";
@@ -42,7 +44,9 @@ const routes = [
     NativeScriptLocalizeModule
   ],
   providers: [
-    FirestoreProvider
+    FirestoreProvider,
+    HttpClientModule,
+    ModalDialogService
   ],
   schemas: [
     NO_ERRORS_SCHEMA
