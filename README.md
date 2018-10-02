@@ -7,4 +7,7 @@ It connects to a Google Cloud Firestore database, displays a list of stored user
 To launch the project:
 - first install NativeScript: https://docs.nativescript.org/angular/start/quick-setup
 - run `npm install`
-- run `tns run android`
+- run `tns debug android`
+
+To debug in Chrome:
+open [chrome-devtools://devtools/bundled/inspector.html?experiments=true&ws=localhost:40000](chrome-devtools://devtools/bundled/inspector.html?experiments=true&ws=localhost:40000)
