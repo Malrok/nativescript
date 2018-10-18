@@ -7,7 +7,10 @@ import { ModalDialogService } from 'nativescript-angular/modal-dialog';
 import { NativeScriptModule } from 'nativescript-angular/nativescript.module';
 import { NativeScriptRouterModule } from 'nativescript-angular/router';
 import { NativeScriptLocalizeModule } from "nativescript-localize/angular";
+import { AddressAutocompleteComponent } from '~/components/address-autocomplete/address-autocomplete';
+import { AddressAutocompleteModalComponent } from '~/components/address-autocomplete/address-autocomplete-modal';
 import { ListComponent } from '~/components/list/list.component';
+import { GeocodingProvider } from '~/services/geocoding/geocoding';
 import { AppComponent } from './app.component';
 import { DetailsComponent } from './components/details/details.component';
 import { HomeComponent } from './components/home/home.component';
@@ -32,7 +35,12 @@ const routes = [
     AppComponent,
     HomeComponent,
     ListComponent,
-    DetailsComponent
+    DetailsComponent,
+    AddressAutocompleteComponent,
+    AddressAutocompleteModalComponent
+  ],
+  entryComponents: [
+    AddressAutocompleteModalComponent
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -40,13 +48,14 @@ const routes = [
     NativeScriptRouterModule,
     NativeScriptRouterModule.forRoot(routes),
     NativeScriptFormsModule,
+    NativeScriptLocalizeModule,
     ReactiveFormsModule,
-    NativeScriptLocalizeModule
+    HttpClientModule,
   ],
   providers: [
     FirestoreProvider,
-    HttpClientModule,
-    ModalDialogService
+    ModalDialogService,
+    GeocodingProvider
   ],
   schemas: [
     NO_ERRORS_SCHEMA

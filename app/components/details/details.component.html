@@ -8,6 +8,6 @@
   <TextField type="text" formControlName="description"></TextField>
   <Label text="{{ 'PAGES.DETAILS.EMAIL' | L }}"></Label>
   <TextField type="email" formControlName="email"></TextField>
-  <mv-address-autocomplete label="address"></mv-address-autocomplete>
+  <mv-address-autocomplete label="address" formControlName="address"></mv-address-autocomplete>
   <Button class="btn btn-primary btn-active" id="button" text="VALIDATE" (tap)="submit()"></Button>
 </StackLayout>

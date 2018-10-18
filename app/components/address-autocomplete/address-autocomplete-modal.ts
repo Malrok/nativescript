@@ -2,20 +2,15 @@ import { Component, forwardRef, NgZone } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ModalDialogParams } from 'nativescript-angular/modal-dialog';
 import { TextField } from "tns-core-modules/ui/text-field";
+import { GeocodingProvider } from '~/services/geocoding/geocoding';
 import { Address } from '../../models/address';
-import { AddressDetails } from '../../models/address-details';
-
-/**
- * Google declaration provides access to Google maps api
- */
-declare var google: any;
 
 /**
  * Component providing a searchbar input which autocomplete returned by Google Maps API
  */
 @Component({
   selector: 'mv-address-autocomplete-modal',
-  templateUrl: 'address-autocomplete-modal.html',
+  templateUrl: './components/address-autocomplete/address-autocomplete-modal.html',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -41,10 +36,6 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
    */
   label: string;
 
-  /**
-   * Boolean that indicates if the component will return the full detailed address or not.
-   */
-  private fullAddressDetails: boolean;
 
   /**
    * The component needs a model (ngModel od formControlName) option that will store the returned address
@@ -60,21 +51,6 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
    * True if the input address will be used as is
    */
   private useInputAddress: boolean;
-
-  /**
-   * Google autocomplete service
-   */
-  private autocompleteService = new google.maps.places.AutocompleteService();
-
-  /**
-   * Google place service
-   */
-  private placeService;
-
-  /**
-   * Google geocoder service
-   */
-  private geocoder;
 
   /**
    * Results received from Google services
@@ -104,14 +80,14 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
 
   constructor(
     private ngZone: NgZone,
-    private params: ModalDialogParams
+    private params: ModalDialogParams,
+    private geocoder: GeocodingProvider
   ) { }
 
   ionViewDidEnter() {
     this.label = this.params.context.label;
     this.allowCustom = this.params.context.allowCustom;
     this.customEnabled = false;
-    this.fullAddressDetails = this.params.context.fullAddressDetails;
     // setTimeout(() => {
     //   this.searchBar.setFocus();
     // }, 500);
@@ -144,8 +120,7 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
   /**
    * When the input loses the focus, this method is called to hide the propositions list.
    */
-  public onBlur(args) {
-    let textField = <TextField>args.object;
+  public onBlur() {
     // we need a timeout to prevent list from being emptied before the click event is emitted
     setTimeout(() => this.setList(), 300);
   }
@@ -157,6 +132,7 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
   */
   public inputOnSearchbar(args, disableCustom: boolean) {
     let textField = <TextField>args.object;
+    this.displayedAddressValue = textField.text;
     if (this.displayedAddressValue) {
       this.addressValue = {
         formattedAddress: this.displayedAddressValue
@@ -187,10 +163,12 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
       this.setList();
       return;
     }
-    this.autocompleteService.getPlacePredictions({ input: this.displayedAddressValue },
-      (results, status) => {
-        if (results && results.length > 0) {
-          this.setList(results);
+
+    this.geocoder.search(this.displayedAddressValue)
+      .then((places) => {
+        console.log('useAutocompleteservice', places);
+        if (places && places.length > 0) {
+          this.setList(places);
           this.ngZone.run(() => {
             if (!this.customEnabled) {
               this.customEnabled = true;
@@ -198,34 +176,8 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
               // Nothing to do...
             }
           });
-        } else {
-          this.useGeocoding();
         }
       });
-  }
-
-  /**
-   * This method calls the Google geocoding to get predictions based on the input value.
-   * If there are some results, they wil fill the propositions list.
-   */
-  private useGeocoding() {
-    this.useInputAddress = true;
-    const request = {
-      address: this.displayedAddressValue
-    };
-    if (!this.geocoder) {
-      this.geocoder = new google.maps.Geocoder();
-    }
-    this.geocoder.geocode(request, (results, status) => {
-      this.setList(results);
-      this.ngZone.run(() => {
-        if (!this.customEnabled) {
-          this.customEnabled = true;
-        } else {
-          // Nothing to do...
-        }
-      });
-    });
   }
 
   /**
@@ -244,59 +196,16 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
    * @param item Selected item from propositon list
    */
   public selectSearchResult(item) {
-    if (this.fullAddressDetails) {
-      const request = {
-        placeId: item.place_id
-      };
-      if (!this.placeService) {
-        this.placeService = new google.maps.places.PlacesService(document.getElementById('attribution'));
-      }
-      this.placeService.getDetails(request, (place, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          this.displayedAddressValue = place.formatted_address;
-          const addressDetails: AddressDetails = {
-            route: '',
-            postalCode: '',
-            city: '',
-            country: ''
-          };
-          for (const component of place.address_components) {
-            if (component.types[0] === 'street_number') {
-              addressDetails.streetNumber = component.long_name;
-            }
-            if (component.types[0] === 'route') {
-              addressDetails.route = component.long_name;
-            }
-            if (component.types[0] === 'postal_code') {
-              addressDetails.postalCode = component.long_name;
-            }
-            if (component.types[0] === 'locality') {
-              addressDetails.city = component.long_name;
-            }
-            if (component.types[0] === 'country') {
-              addressDetails.country = component.long_name;
-            }
-          }
-          this.addressValue = {
-            latitude: place.geometry.location.lat(),
-            longitude: place.geometry.location.lng(),
-            formattedAddress: this.useInputAddress ? this.displayedAddressValue : place.formatted_address,
-            googlePlaceId: place.place_id,
-            addressDetails: addressDetails
-          };
-        } else {
-          console.log('place service answer status = ', status);
-        }
-        this.params.closeCallback(this.addressValue);
-      });
-    } else {
+    this.geocoder.geocode(item.data.description).then((result) => {
+      console.log('[selectSearchResult] -- result: ', result.geometry);
       this.addressValue = {
+        latitude: result.geometry.location.lat,
+        longitude: result.geometry.location.lng,
         formattedAddress: item.description || item.formatted_address,
         googlePlaceId: item.place_id
       };
       this.params.closeCallback(this.addressValue);
-    }
-    this.setList();
+    });
   }
 
   closeModal() {

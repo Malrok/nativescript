@@ -1,8 +1,10 @@
 
 import { Component, forwardRef, Input, NgZone, ViewContainerRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { registerElement } from 'nativescript-angular/element-registry';
 import { ModalDialogOptions, ModalDialogService } from 'nativescript-angular/modal-dialog';
 import * as firebase from 'nativescript-plugin-firebase';
+import { ContentView } from 'tns-core-modules/ui/content-view/content-view';
 import { GeocodingProvider } from '~/services/geocoding/geocoding';
 import { Address } from '../../models/address';
 import { AddressAutocompleteModalComponent } from './address-autocomplete-modal';
@@ -12,7 +14,7 @@ import { AddressAutocompleteModalComponent } from './address-autocomplete-modal'
  */
 @Component({
   selector: 'mv-address-autocomplete',
-  templateUrl: 'address-autocomplete.html',
+  templateUrl: './components/address-autocomplete/address-autocomplete.html',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -21,7 +23,7 @@ import { AddressAutocompleteModalComponent } from './address-autocomplete-modal'
     }
   ]
 })
-export class AddressAutocompleteComponent implements ControlValueAccessor {
+export class AddressAutocompleteComponent extends ContentView implements ControlValueAccessor {
   /**
    * The component needs a label option to fill the placeholder
    */
@@ -72,7 +74,9 @@ export class AddressAutocompleteComponent implements ControlValueAccessor {
     private vcRef: ViewContainerRef,
     private ngZone: NgZone,
     private geocoder: GeocodingProvider
-  ) { }
+  ) {
+    super();
+  }
 
   /**
    * Open a modal with searchbar and results list.
@@ -83,15 +87,17 @@ export class AddressAutocompleteComponent implements ControlValueAccessor {
       context: {
         label: this.label,
         allowCustom: this.allowCustom,
-        fullAddressDetails: this.fullAddressDetails
+        fullAddressDetails: this.fullAddressDetails,
+        addressValue: this.addressValue
       },
       fullscreen: true
     };
     this.modalService.showModal(AddressAutocompleteModalComponent, options)
       .then((newAddress: Address) => {
+        console.log(`[openModal] -- newAddress: ${JSON.stringify(newAddress)}`);
         if (newAddress && newAddress.formattedAddress) {
           this.addressValue = newAddress;
-          const geopoint = new firebase.firestore.GeoPoint(newAddress.latitude, newAddress.longitude);
+          const geopoint = { latitude: newAddress.latitude, longitude: newAddress.longitude };
           this.propagateChange(geopoint);
         }
       });
@@ -104,11 +110,9 @@ export class AddressAutocompleteComponent implements ControlValueAccessor {
    * @param value Value given from the model
    */
   writeValue(geopoint: firebase.firestore.GeoPoint): void {
-    console.log('writeValue: ', geopoint);
     if (geopoint) {
       this.geocoder.reverseGeocode(geopoint.latitude, geopoint.longitude)
         .then((address: string) => {
-          console.log(address);
           this._addressValue.formattedAddress = address;
         })
         .catch((error: any) => console.log(error));
@@ -150,3 +154,6 @@ export class AddressAutocompleteComponent implements ControlValueAccessor {
    */
   public propagateChange = (_: any) => { };
 }
+
+
+registerElement('address-autocomplete', () => require('./address-autocomplete').AddressAutocompleteComponent);
