@@ -1,7 +1,8 @@
-import { Component, forwardRef, NgZone } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, forwardRef, NgZone, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ModalDialogParams } from 'nativescript-angular/modal-dialog';
 import { TextField } from "tns-core-modules/ui/text-field";
+import * as utils from 'tns-core-modules/utils/utils';
 import { GeocodingProvider } from '~/services/geocoding/geocoding';
 import { Address } from '../../models/address';
 
@@ -19,7 +20,7 @@ import { Address } from '../../models/address';
     }
   ]
 })
-export class AddressAutocompleteModalComponent implements ControlValueAccessor {
+export class AddressAutocompleteModalComponent implements ControlValueAccessor, AfterViewInit {
 
   /**
    * Boolean that indicates if the "custom address he typed could be presented on the list"
@@ -57,6 +58,8 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
    */
   public results = [];
 
+  @ViewChild("search") search: ElementRef;
+
   private get addressValue(): Address {
     return this._addressValue;
   }
@@ -84,13 +87,15 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
     private geocoder: GeocodingProvider
   ) { }
 
-  ionViewDidEnter() {
+  ngAfterViewInit() {
     this.label = this.params.context.label;
     this.allowCustom = this.params.context.allowCustom;
     this.customEnabled = false;
-    // setTimeout(() => {
-    //   this.searchBar.setFocus();
-    // }, 500);
+    setTimeout(() => {
+      this.search.nativeElement.focus();
+      var imm = utils.ad.getInputMethodManager();
+      imm.showSoftInput(this.search.nativeElement.android, 0);
+    }, 500);
   }
 
   /**
@@ -166,7 +171,6 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
 
     this.geocoder.search(this.displayedAddressValue)
       .then((places) => {
-        console.log('useAutocompleteservice', places);
         if (places && places.length > 0) {
           this.setList(places);
           this.ngZone.run(() => {
@@ -197,7 +201,6 @@ export class AddressAutocompleteModalComponent implements ControlValueAccessor {
    */
   public selectSearchResult(item) {
     this.geocoder.geocode(item.data.description).then((result) => {
-      console.log('[selectSearchResult] -- result: ', result.geometry);
       this.addressValue = {
         latitude: result.geometry.location.lat,
         longitude: result.geometry.location.lng,

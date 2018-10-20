@@ -1,4 +1,4 @@
 <StackLayout>
   <Label>{{ label }}</Label>
-  <TextField type="text" [(ngModel)]="addressValue.formattedAddress" (focus)="openModal()"></TextField>
+  <TextField type="text" [(ngModel)]="addressValue.formattedAddress" (tap)="openModal()" editable="false"></TextField>
 </StackLayout>
