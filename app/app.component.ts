@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { registerElement } from "nativescript-angular/element-registry";
 import * as firebase from "nativescript-plugin-firebase";
 import { Page } from "ui/page";
 
@@ -39,3 +40,5 @@ export class AppComponent implements OnInit {
     );
   }
 }
+
+registerElement("Fab", () => require("nativescript-floatingactionbutton").Fab);

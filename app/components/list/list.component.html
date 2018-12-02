@@ -1,10 +1,16 @@
 <StackLayout>
-  <ListView [items]="users | async">
-    <ng-template let-user="item">
-      <StackLayout orientation="horizontal" [nsRouterLink]="['/details', user.id]">
-        <Image [src]="user.picture" width="72" height="72"></Image>
-        <Label verticalAlignment="center" text="{{ user.first_name }} {{ user.last_name }}"></Label>
-      </StackLayout>
-    </ng-template>
-  </ListView>
+  <GridLayout rows="*, auto" columns="*, auto">
+    <ListView row="0" rowSpan="2" col="0" colSpan="2" [items]="users | async">
+      <ng-template let-user="item">
+        <StackLayout orientation="horizontal" [nsRouterLink]="['/details', user.id]">
+          <Image [src]="user.picture" width="72" height="72"></Image>
+          <Label verticalAlignment="center" text="{{ user.first_name }} {{ user.last_name }}"></Label>
+        </StackLayout>
+      </ng-template>
+    </ListView>
+    <AbsoluteLayout row="1" col="1" class="fab-button-container" width="88" height="88">
+      <FAB [nsRouterLink]="['/details', 'new']" icon="res://ic_add" rippleColor="#f1f1f1" class="fab-button" width="72"
+        height="72"></FAB>
+    </AbsoluteLayout>
+  </GridLayout>
 </StackLayout>
