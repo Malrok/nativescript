@@ -18,7 +18,7 @@ export class FirestoreProvider {
     var usersData = [];
 
     return Observable.create(subscriber => {
-      firebase.firestore.collection('users').limit(10).onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
+      firebase.firestore.collection('users').onSnapshot((snapshot: firebase.firestore.QuerySnapshot) => {
         snapshot.forEach(user => {
           usersData.push(UserFactory.fromDocument(user));
           this.ngZone.run(() => {
