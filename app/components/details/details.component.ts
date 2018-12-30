@@ -11,8 +11,8 @@ import { FirestoreProvider } from '~/services/firestore/firestore';
 
 @Component({
   selector: 'app-components/details',
-  templateUrl: './components/details/details.component.html',
-  styleUrls: ['./components/details/details.component.scss']
+  templateUrl: 'details.component.html',
+  styleUrls: ['details.component.scss']
 })
 export class DetailsComponent {
 

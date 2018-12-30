@@ -1,12 +1,15 @@
 import { AfterViewChecked, Component } from '@angular/core';
+import * as Toast from 'nativescript-toast';
 import { Observable } from 'rxjs';
 import { User } from '~/models/user';
 import { FirestoreProvider } from '~/services/firestore/firestore';
 
+declare var com: any;
+
 @Component({
   selector: 'app-components/list',
-  templateUrl: './components/list/list.component.html',
-  styleUrls: ['./components/list/list.component.scss']
+  templateUrl: 'list.component.html',
+  styleUrls: ['list.component.scss']
 })
 export class ListComponent implements AfterViewChecked {
 
@@ -19,7 +22,10 @@ export class ListComponent implements AfterViewChecked {
   }
 
   ngAfterViewChecked() {
-    console.log('DEBUG -- ListComponent.ngAfterViewChecked -- ' + new Date().getTime());
+    var now = new Date().getTime();
+    var startTime = now - com.moventes.moventest.nativescript.Timer.start;
+    var toast = Toast.makeText('DEBUG -- ListComponent.ngAfterViewChecked -- ' + com.moventes.moventest.nativescript.Timer.start + ' -- ' + now + ' -- ' + startTime);
+    toast.show();
   }
 
 }

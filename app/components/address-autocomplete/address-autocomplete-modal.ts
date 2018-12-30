@@ -11,7 +11,7 @@ import { Address } from '../../models/address';
  */
 @Component({
   selector: 'mv-address-autocomplete-modal',
-  templateUrl: './components/address-autocomplete/address-autocomplete-modal.html',
+  templateUrl: 'address-autocomplete-modal.html',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

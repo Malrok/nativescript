@@ -14,7 +14,7 @@ import { AddressAutocompleteModalComponent } from './address-autocomplete-modal'
  */
 @Component({
   selector: 'mv-address-autocomplete',
-  templateUrl: './components/address-autocomplete/address-autocomplete.html',
+  templateUrl: 'address-autocomplete.html',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
